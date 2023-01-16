@@ -29,10 +29,8 @@ void Tremolo::command(unsigned int comm) {
 }
 
 void Tremolo::operator()(std::vector<float> &x){
-  for (unsigned int i = 0; i < x.size(); i++) {
-    x[i] *= ((2 - A) + A * sin(fase)) / 2;
-    fase += inc_fase;
-
+  for (unsigned int i = 0; i < x.size(); i++, fase += inc_fase) {
     while(fase > 2 * M_PI) fase -= 2 * M_PI;
+    x[i] *= ((2 - A) + A * sin(fase)) / 2;
   }
 }

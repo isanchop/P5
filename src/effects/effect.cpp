@@ -18,7 +18,7 @@ namespace upc {
     if (name == "Tremolo") {
       pEffect = (Effect *) new Tremolo(parameters);
     }
-	else if (name == "Vibrato") {
+	  else if (name == "Vibrato") {
       pEffect = (Effect *) new Vibrato(parameters);
     }
     return pEffect;
