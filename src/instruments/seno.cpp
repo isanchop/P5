@@ -88,14 +88,6 @@ const vector<float> & Seno::synthesize() {
 
     // Lerp
     x[i] = A * ((1-frac)*tbl[il] + frac*tbl[ir]);
-
-    // Uncomment to get data to plot
-    // Append to file
-    // float k = ((1-frac)*tbl[il] + frac*tbl[ir]);
-    // f << std::fixed << setprecision(4) << endl;
-    // f << tbl[il] << "\t" << tbl[ir] << "\t" << k;
-    // printf("%.10f\t%.10f\t%.10f\n", tbl[il], tbl[ir], ((1-frac)*tbl[il] + frac*tbl[ir]));
-
   }
 
   //apply envelope to x and update internal status of ADSR
