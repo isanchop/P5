@@ -31,6 +31,14 @@ permitan visualizar el funcionamiento de la curva ADSR.
 ````
 Seno	ADSR_A=0.2; ADSR_D=0.2; ADSR_S=0.2; ADSR_R=0.2; N=16;
 ````
+
+- ADSR_A (Attack): 0.2, este parámetro determina cuánto tiempo tarda en alcanzar el nivel máximo de amplitud después de que se ha iniciado un sonido.
+- ADSR_D (Decay): 0.2, este parámetro determina cuánto tiempo tarda en alcanzar el nivel de sostenimiento después de que se ha alcanzado el nivel máximo de amplitud.
+- ADSR_S (Sustain): 0.2, este parámetro determina el nivel de amplitud en el que se mantiene el sonido mientras se mantiene presionada una tecla.
+- ADSR_R (Release): 0.2, este parámetro determina cuánto tiempo tarda en llegar a 0 el nivel de amplitud después de que se ha liberado una tecla.
+- N: 16, el número de muestras en un período de onda senoidal.
+
+Con estos parámetros, cada fase de la envolvente ADSR será clara y fácilmente perceptible, ya que todos los parámetros tienen un valor de 0.2. El ataque será rápido, el decaimiento y el sostenimiento serán moderados y la liberación será rápida. Este instrumento generará un sonido sencillo con una envolvente fácilmente perceptible.
 ![](work/plots/res/Figure_1.png)
 
 * Un instrumento *percusivo*, como una guitarra o un piano, en el que el sonido tenga un ataque rápido, no
@@ -76,6 +84,8 @@ mediante búsqueda de los valores en una tabla.
 
 - Incluya, a continuación, el código del fichero `seno.cpp` con los métodos de la clase Seno.
 
+Este código es una implementación de un sintetizador de ondas senoidales utilizando el método Linear Interpolation (Lerp) para generar una onda suave y continua. 
+
 ```cpp
 #include <iostream>
 #include <iomanip> 
@@ -89,7 +99,7 @@ mediante búsqueda de los valores en una tabla.
 using namespace upc;
 using namespace std;
 
-Seno::Seno(const std::string &param) 
+Seno::Seno(const std::string &param)
   : adsr(SamplingRate, param) {
   bActive = false;
   x.resize(BSIZE);
@@ -110,8 +120,10 @@ Seno::Seno(const std::string &param)
     phase += step;
   }
 }
+```
+La clase Seno tiene un constructor que toma un parámetro de cadena y utiliza la clase KeyValue para inicializar un parámetro N que es el número de muestras en un período de onda senoidal. 
 
-
+```cpp
 void Seno::command(long cmd, long note, long vel) {
   if (cmd == 9) {		//'Key' pressed: attack begins
     bActive = true;
@@ -134,8 +146,11 @@ void Seno::command(long cmd, long note, long vel) {
     adsr.end();
   }
 }
+```
 
+El método "command" que se utiliza para recibir comandos desde un teclado o controlador MIDI. Este método se utiliza para iniciar, detener y finalizar un sonido.
 
+```cpp
 const vector<float> & Seno::synthesize() {
   
   fstream f;
@@ -173,13 +188,19 @@ const vector<float> & Seno::synthesize() {
   return x;
 }
 ```
-
+En el método de síntesis, la clase utiliza una tabla de valores precalculados de seno y utiliza un índice para seleccionar los valores de la tabla y lerp para interpolarlos para generar una onda continua. El método de síntesis también aplica el envoltorio adsr a la onda generada antes de devolverla.
 
 - Explique qué método se ha seguido para asignar un valor a la señal a partir de los contenidos en la tabla,
   e incluya una gráfica en la que se vean claramente (use pelotitas en lugar de líneas) los valores de la
   tabla y los de la señal generada.
 
-Hemos usado el método de interpolación lineal a partir de los contenidos de la tabla.
+El método utilizado para asignar un valor a la señal a partir de los contenidos en la tabla es el método de interpolación lineal, también conocido como Lerp. Este método se utiliza para generar un valor intermedio entre dos valores conocidos, en este caso, dos valores de la tabla de valores precalculados de seno.
+
+En el método de síntesis, se utiliza un índice para seleccionar los valores de la tabla. El índice se actualiza en cada iteración del bucle for con un valor delta_idx, que es calculado en el método command. Luego, en cada iteración, se utiliza el índice para calcular el índice de base (il) y el índice de fracción (frac) de la tabla. El índice de base se calcula mediante la función floor y el índice de fracción se calcula restando el índice de base del índice total.
+
+Una vez que se tiene el índice de base e índice de fracción, se utilizan para calcular el valor intermedio en la señal. Se selecciona el valor de la tabla en el índice de base (il) y en el índice siguiente (ir) y se utilizan para calcular el valor intermedio en la señal. El valor intermedio se calcula mediante la fórmula (1-frac)tbl[il] + fractbl[ir], donde tbl es la tabla de valores precalculados de seno.
+
+En resumen, se utiliza el método de interpolación lineal para asignar un valor a la señal a partir de los contenidos en la tabla, eligiendo dos valores de la tabla y utilizando un índice de fracción para calcular un valor intermedio entre ellos.
 
 ![](work/plots/res/Figure_5.png)
 
@@ -279,6 +300,7 @@ Use el programa `synth` para generar canciones a partir de su partitura MIDI. Co
 - En este triste arreglo, la pista 1 corresponde al instrumento solista (puede ser un piano, flautas,
   violines, etc.), y la 2 al bajo (bajo eléctrico, contrabajo, tuba, etc.).
 
+Estos parámetros están diseñados para simular el sonido de un piano eléctrico, donde el ataque es rápido, el decaimiento es moderado, el nivel de sostenimiento es moderado y el tiempo de liberación es rápido. Los valores de Index Modulation y Ratio de modulación de frecuencia son utilizados para generar un sonido más complejo en el piano eléctrico.
 
 ```
 # Electric Piano
